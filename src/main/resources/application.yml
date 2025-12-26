@@ -1,3 +1,58 @@
 spring:
   application:
     name: tbd-user-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:1032/tbd_user_db}
+    username: ${POSTGRES_USER:tbd_local_pg_user}
+    password: ${POSTGRES_PASSWORD:tbd_local_12345}
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 2032
+  servlet:
+    context-path: /tbd
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka:${EUREKA_PASSWORD}@localhost:2031/eureka
+
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:'this_is-the-secret-which-is-used-for-jwt-token-and-this-should-remain-secret'}
+    issuer: ${JWT_ISSUER:'the-best-dukkan'}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: "/tbd/${spring.application.name}/actuator"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+logging:
+  level:
+    org.springframework.security: DEBUG
