@@ -31,6 +31,7 @@ repositories {
 }
 
 ext {
+    commonSecurityVersion = '1.0.3'
     lombokVersion = '1.18.38'
     mapstructVersion = '1.6.3'
     lombokMapstructBindingVersion = '0.2.0'
@@ -39,7 +40,7 @@ ext {
 
 dependencies {
 
-    implementation 'com.tbd:common-security:1.0.2'
+    implementation "com.tbd:common-security:${commonSecurityVersion}"
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'

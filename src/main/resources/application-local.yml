@@ -36,8 +36,10 @@ app:
   jwt:
     secret: ${JWT_SECRET:this_is-the-secret-which-is-used-for-jwt-token-and-this-should-remain-secret}
     issuer: ${JWT_ISSUER:the-best-dukkan}
+  api:
+    endpoint:
+      secret: ${API_SECRET:this-is-secret-for-testing}
 
-management:
   endpoints:
     web:
       exposure:
