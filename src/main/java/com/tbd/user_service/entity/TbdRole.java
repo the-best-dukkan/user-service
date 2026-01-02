@@ -1,5 +1,6 @@
 package com.tbd.user_service.entity;
 
+import com.tbd.user_service.audit.Auditable;
 import com.tbd.user_service.enums.TbdRoles;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,7 @@ import org.springframework.data.util.ProxyUtils;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TbdRole {
+public class TbdRole extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

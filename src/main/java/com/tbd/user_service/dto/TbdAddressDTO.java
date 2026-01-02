@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 
 @Data
 @AllArgsConstructor
@@ -49,4 +50,7 @@ public class TbdAddressDTO implements Serializable {
     private String fullName;
     @Size(min = 2, max = 100, message = "validation.address.size.landmark")
     private String landmark;
+
+    private Instant createdDate;
+    private Instant modifiedDate;
 }

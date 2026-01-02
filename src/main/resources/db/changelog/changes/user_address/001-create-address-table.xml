@@ -35,7 +35,15 @@
                 <constraints nullable="false"/>
             </column>
             <column name="alternate_phone_number" type="VARCHAR(20)"/>
+            <column name="full_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="landmark" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
             <column name="user_sub" type="VARCHAR(255)"/>
+            <column name="created_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="modified_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="user_sub" baseTableName="tbd_address"

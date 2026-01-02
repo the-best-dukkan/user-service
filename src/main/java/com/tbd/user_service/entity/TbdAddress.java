@@ -1,5 +1,6 @@
 package com.tbd.user_service.entity;
 
+import com.tbd.user_service.audit.Auditable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import org.springframework.data.util.ProxyUtils;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TbdAddress {
+public class TbdAddress extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

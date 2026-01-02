@@ -8,18 +8,24 @@ import com.tbd.user_service.entity.TbdAddress;
 import com.tbd.user_service.entity.TbdRole;
 import com.tbd.user_service.entity.TbdUser;
 import com.tbd.user_service.enums.TbdRoles;
+import com.tbd.user_service.exception.PageSizeLimitExceedException;
 import com.tbd.user_service.exception.ResourceNotFoundInDbException;
 import com.tbd.user_service.mapper.TbdAddressMapper;
 import com.tbd.user_service.mapper.TbdUserMapper;
 import com.tbd.user_service.repository.TbdAddressRepository;
 import com.tbd.user_service.repository.UserRepository;
 import com.tbd.user_service.repository.UserRoleRepository;
+import com.tbd.user_service.util.Translator;
+import com.tbd.user_service.util.Util;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -32,6 +38,9 @@ public class UserServiceImpl implements UserService {
     private final TbdAddressRepository tbdAddressRepository;
     private final TbdUserMapper tbdUserMapper;
     private final TbdAddressMapper tbdAddressMapper;
+    private final HttpServletRequest httpServletRequest;
+    private final Translator translator;
+    private final MessageSource messageSource;
 
     @Override
     @Transactional
@@ -63,26 +72,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserResponseDTO getUserByUserSub(String userSub) {
+    public UserResponseDTO getCurrentUser() {
 
-        getUserFromDb(userSub);
-
-        TbdUser tbdUser = getUserFromDb(userSub);
-
+        TbdUser tbdUser = getUserFromDb();
         return tbdUserMapper.tbdUserToUserResponseDTO(tbdUser);
     }
 
 
     @Override
-    public List<TbdAddressDTO> getAddressesByUserSub(String userSub) {
+    @Transactional(readOnly = true)
+    public Page<TbdAddressDTO> getAddresses(Pageable pageable) {
 
-        return List.of();
+        validatePageSize(100, pageable);
+
+        TbdUser userFromDb = getUserFromDb();
+
+        Page<TbdAddress> allByUserSub = tbdAddressRepository.findAllByUserSub(userFromDb.getSub(), pageable);
+        return allByUserSub.map(tbdAddressMapper::tbdUserToUserAddressDTO);
     }
 
     @Override
-    public TbdAddressDTO addAddress(TbdAddressDTO tbdAddressDTO, String userSub) {
+    @Transactional
+    public TbdAddressDTO addAddress(TbdAddressDTO tbdAddressDTO) {
 
-        TbdUser tbdUser = getUserFromDb(userSub);
+        TbdUser tbdUser = getUserFromDb();
         TbdAddress tbdAddress = tbdAddressMapper.tbdUserDTOToUserAddress(tbdAddressDTO);
 
         tbdAddress.setUser(tbdUser);
@@ -90,12 +103,19 @@ public class UserServiceImpl implements UserService {
         return tbdAddressMapper.tbdUserToUserAddressDTO(savedAddress);
     }
 
-    private TbdUser getUserFromDb(String userSub) {
-        return userRepository.findBySub(userSub)
-                .orElseThrow(() -> new ResourceNotFoundInDbException("error.user.notfound"));
+    private TbdUser getUserFromDb() {
+        return userRepository.findBySub(Util.extractUserSubFromRequest(httpServletRequest, messageSource))
+                .orElseThrow(() -> new ResourceNotFoundInDbException(translator.translate("error.user.notfound")));
     }
 
     private UserSyncResponseDTO mapToUserSyncResponse(TbdUser tbdUser) {
         return tbdUserMapper.tbdUserToUserSyncResponse(tbdUser);
+    }
+
+    private void validatePageSize(int limit, Pageable pageable) {
+
+        if (pageable.getPageSize() > limit) {
+            throw new PageSizeLimitExceedException(translator.translate("error.request.page_size_limit_exceed", limit));
+        }
     }
 }

@@ -22,8 +22,8 @@ public class UserResponseDTO implements Serializable {
     private String fullName;
     private boolean profileComplete;
     private String picture;
-    private Instant createdAt;
-    private Instant modifiedAt;
+    private Instant createdDate;
+    private Instant modifiedDate;
     private Instant lastLogin;
     private Boolean isEmailVerified;
     private Set<TbdRoleDTO> roles;

@@ -1,5 +1,6 @@
 package com.tbd.user_service.entity;
 
+import com.tbd.user_service.audit.Auditable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +22,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TbdUser {
+public class TbdUser extends Auditable {
 
     @Id
     @Column(name = "sub", nullable = false, updatable = false)
@@ -38,14 +39,6 @@ public class TbdUser {
 
     @Column(name = "picture")
     private String picture;
-
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private Instant createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "modified_at", updatable = false)
-    private Instant modifiedAt;
 
     @Column(name = "last_login")
     private Instant lastLogin;

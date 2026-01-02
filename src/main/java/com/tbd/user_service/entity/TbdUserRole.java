@@ -1,5 +1,6 @@
 package com.tbd.user_service.entity;
 
+import com.tbd.user_service.audit.Auditable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.Objects;
 @Table(name = "tbd_user_roles")
 @AllArgsConstructor
 @NoArgsConstructor
-public class TbdUserRole {
+public class TbdUserRole extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -15,7 +15,6 @@ import java.time.Instant;
 public class ErrorResponse {
 
     private String message;
-    private String errorCode;
     private Integer statusCode;
     private Instant timestamp = Instant.now();
 }
