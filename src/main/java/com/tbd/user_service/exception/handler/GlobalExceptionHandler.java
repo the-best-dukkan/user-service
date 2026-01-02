@@ -1,6 +1,7 @@
 package com.tbd.user_service.exception.handler;
 
 import com.tbd.user_service.dto.ErrorResponse;
+import com.tbd.user_service.exception.MaxAddressLimitExceedException;
 import com.tbd.user_service.exception.PageSizeLimitExceedException;
 import com.tbd.user_service.exception.ResourceNotFoundInDbException;
 import com.tbd.user_service.exception.UserSubNotFoundInHeaderException;
@@ -30,6 +31,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PageSizeLimitExceedException.class)
     public ResponseEntity<ErrorResponse> handlePageSizeLimitExceedException(PageSizeLimitExceedException ex) {
+        return getErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ExceptionHandler(MaxAddressLimitExceedException.class)
+    public ResponseEntity<ErrorResponse> handleMaxAddressLimitExceedException(MaxAddressLimitExceedException ex) {
         return getErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 

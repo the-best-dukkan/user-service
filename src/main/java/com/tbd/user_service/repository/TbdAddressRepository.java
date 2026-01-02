@@ -13,4 +13,6 @@ public interface TbdAddressRepository extends JpaRepository<TbdAddress, Long> {
     @Query("select address from TbdAddress address where address.user.sub = :userSub")
     Page<TbdAddress> findAllByUserSub(String userSub, Pageable pageable);
 
+    @Query("select count(*) from TbdAddress address where address.user.sub = :userSub")
+    int findCountByUserSub(String userSub);
 }

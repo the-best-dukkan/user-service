@@ -8,6 +8,7 @@ import com.tbd.user_service.entity.TbdAddress;
 import com.tbd.user_service.entity.TbdRole;
 import com.tbd.user_service.entity.TbdUser;
 import com.tbd.user_service.enums.TbdRoles;
+import com.tbd.user_service.exception.MaxAddressLimitExceedException;
 import com.tbd.user_service.exception.PageSizeLimitExceedException;
 import com.tbd.user_service.exception.ResourceNotFoundInDbException;
 import com.tbd.user_service.mapper.TbdAddressMapper;
@@ -19,6 +20,7 @@ import com.tbd.user_service.util.Translator;
 import com.tbd.user_service.util.Util;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +43,12 @@ public class UserServiceImpl implements UserService {
     private final HttpServletRequest httpServletRequest;
     private final Translator translator;
     private final MessageSource messageSource;
+
+    @Value("${app.api.config.address-limit}")
+    private int maxAddressLimit;
+
+    @Value("${app.api.config.page-size-limit}")
+    private int pageSizeLimit;
 
     @Override
     @Transactional
@@ -83,7 +91,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public Page<TbdAddressDTO> getAddresses(Pageable pageable) {
 
-        validatePageSize(100, pageable);
+        validatePageSize(pageable);
 
         TbdUser userFromDb = getUserFromDb();
 
@@ -96,11 +104,23 @@ public class UserServiceImpl implements UserService {
     public TbdAddressDTO addAddress(TbdAddressDTO tbdAddressDTO) {
 
         TbdUser tbdUser = getUserFromDb();
+
+        validateMaxAddressLimit(tbdUser);
+
         TbdAddress tbdAddress = tbdAddressMapper.tbdUserDTOToUserAddress(tbdAddressDTO);
 
         tbdAddress.setUser(tbdUser);
         TbdAddress savedAddress = tbdAddressRepository.save(tbdAddress);
         return tbdAddressMapper.tbdUserToUserAddressDTO(savedAddress);
+    }
+
+    private void validateMaxAddressLimit(TbdUser tbdUser) {
+
+        int totalAddressAdded = tbdAddressRepository.findCountByUserSub(tbdUser.getSub());
+
+        if (totalAddressAdded >= maxAddressLimit) {
+            throw new MaxAddressLimitExceedException(translator.translate("error.request.address_limit_exceed", maxAddressLimit));
+        }
     }
 
     private TbdUser getUserFromDb() {
@@ -112,10 +132,10 @@ public class UserServiceImpl implements UserService {
         return tbdUserMapper.tbdUserToUserSyncResponse(tbdUser);
     }
 
-    private void validatePageSize(int limit, Pageable pageable) {
+    private void validatePageSize(Pageable pageable) {
 
-        if (pageable.getPageSize() > limit) {
-            throw new PageSizeLimitExceedException(translator.translate("error.request.page_size_limit_exceed", limit));
+        if (pageable.getPageSize() > pageSizeLimit) {
+            throw new PageSizeLimitExceedException(translator.translate("error.request.page_size_limit_exceed", pageSizeLimit));
         }
     }
 }

@@ -41,6 +41,9 @@ app:
   api:
     endpoint:
       secret: ${API_SECRET:this-is-secret-for-dev-testing}
+    config:
+      address-limit: 20
+      page-size-limit: 100
 
   endpoints:
     web:
