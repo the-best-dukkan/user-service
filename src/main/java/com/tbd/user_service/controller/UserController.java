@@ -1,19 +1,35 @@
 package com.tbd.user_service.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Arrays;
-import java.util.List;
+import com.tbd.user_service.dto.TbdAddressDTO;
+import com.tbd.user_service.dto.UserResponseDTO;
+import com.tbd.user_service.service.UserService;
+import com.tbd.user_service.util.Util;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/users")
 @RestController
+@RequiredArgsConstructor
 public class UserController {
 
-    @GetMapping("/all")
-    public List<String> getUsers() {
+    private final UserService userService;
 
-        return Arrays.asList("user1", "user2", "user3");
+    @GetMapping("/detail")
+    public ResponseEntity<UserResponseDTO> getCurrentUserDetails(HttpServletRequest request) {
+
+        String userSub = Util.extractUserSubFromRequest(request);
+
+        return ResponseEntity.ok(userService.getUserByUserSub(userSub));
     }
+
+    @PostMapping("/add-address")
+    public ResponseEntity<TbdAddressDTO> addAddress(HttpServletRequest request, @RequestBody @Valid TbdAddressDTO tbdAddressDTO) {
+        String userSub = Util.extractUserSubFromRequest(request);
+        return new ResponseEntity<>(userService.addAddress(tbdAddressDTO, userSub), HttpStatus.CREATED);
+    }
+
 }

@@ -6,17 +6,25 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserSyncResponseDTO implements Serializable {
+public class UserResponseDTO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private String email;
     private String sub;
+    private String email;
+    private String fullName;
+    private boolean profileComplete;
+    private String picture;
+    private Instant createdAt;
+    private Instant modifiedAt;
+    private Instant lastLogin;
+    private Boolean isEmailVerified;
     private Set<TbdRoleDTO> roles;
 }

@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.util.ProxyUtils;
+
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -29,5 +32,16 @@ public class TbdUserRole {
     @JoinColumn(name = "role_id", nullable = false)
     private TbdRole role;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != ProxyUtils.getUserClass(o)) return false;
+        TbdUserRole that = (TbdUserRole) o;
+        return Objects.equals(userSub, that.userSub) && Objects.equals(role, that.role);
+    }
 
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

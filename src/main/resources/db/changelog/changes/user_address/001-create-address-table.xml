@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.31.xsd">
+
+    <changeSet id="001-create-address-table" author="Rohit Kumar">
+        <createTable tableName="tbd_address">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_tbd_address"/>
+            </column>
+            <column name="address_line_1" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address_line_2" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="city" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="state" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="zip_code" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country_code" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone_number" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="alternate_phone_number" type="VARCHAR(20)"/>
+            <column name="user_sub" type="VARCHAR(255)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="user_sub" baseTableName="tbd_address"
+                                 constraintName="FK_TBD_ADDRESS_ON_USER_SUB" referencedColumnNames="sub"
+                                 referencedTableName="tbd_users"/>
+    </changeSet>
+
+</databaseChangeLog>

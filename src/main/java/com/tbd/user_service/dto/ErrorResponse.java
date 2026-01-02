@@ -1,0 +1,21 @@
+package com.tbd.user_service.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+
+import java.time.Instant;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class ErrorResponse {
+
+    private String message;
+    private String errorCode;
+    private Integer statusCode;
+    private Instant timestamp = Instant.now();
+}
