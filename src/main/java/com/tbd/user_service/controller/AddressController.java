@@ -1,5 +1,7 @@
 package com.tbd.user_service.controller;
 
+import com.tbd.common.validation.groups.OnCreate;
+import com.tbd.common.validation.groups.OnUpdate;
 import com.tbd.user_service.dto.TbdAddressDTO;
 import com.tbd.user_service.service.UserService;
 import jakarta.validation.Valid;
@@ -10,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/users/address")
@@ -19,8 +22,8 @@ public class AddressController {
 
     private final UserService userService;
 
-    @PostMapping("/add-address")
-    public ResponseEntity<TbdAddressDTO> addAddress(@RequestBody @Valid TbdAddressDTO tbdAddressDTO) {
+    @PostMapping
+    public ResponseEntity<TbdAddressDTO> addAddress(@RequestBody @Validated(OnCreate.class) TbdAddressDTO tbdAddressDTO) {
         return new ResponseEntity<>(userService.addAddress(tbdAddressDTO), HttpStatus.CREATED);
     }
 
@@ -29,9 +32,26 @@ public class AddressController {
         return new ResponseEntity<>(userService.getAddresses(pageable), HttpStatus.OK);
     }
 
-    @PutMapping
-    public ResponseEntity<TbdAddressDTO> updateAddress(@RequestBody @Valid TbdAddressDTO tbdAddressDTO) {
+    @GetMapping("/{id}")
+    public ResponseEntity<TbdAddressDTO> getAddress(@PathVariable Long id) {
 
-        return null;
+        return ResponseEntity.ok(userService.getAddressById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TbdAddressDTO> updateAddress(@PathVariable Long id, @RequestBody @Validated({OnCreate.class, OnUpdate.class}) TbdAddressDTO tbdAddressDTO) {
+
+        return ResponseEntity.ok(userService.updateAddress(id, tbdAddressDTO));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<TbdAddressDTO> partialUpdateAddress(@PathVariable Long id, @RequestBody @Validated(OnUpdate.class) TbdAddressDTO tbdAddressDTO) {
+        return ResponseEntity.ok(userService.partialUpdateAddress(id, tbdAddressDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAddress(@PathVariable Long id) {
+        userService.deleteAddress(id);
+        return ResponseEntity.noContent().build();
     }
 }

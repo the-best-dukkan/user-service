@@ -2,6 +2,8 @@ package com.tbd.user_service.service;
 
 import com.tbd.common.exceptions.PageSizeLimitExceedException;
 import com.tbd.common.exceptions.ResourceNotFoundInDbException;
+import com.tbd.common.exceptions.ValidationException;
+import com.tbd.common.utils.CommonUtil;
 import com.tbd.common.utils.Translator;
 import com.tbd.user_service.dto.TbdAddressDTO;
 import com.tbd.user_service.dto.UserResponseDTO;
@@ -114,6 +116,44 @@ public class UserServiceImpl implements UserService {
         return tbdAddressMapper.tbdUserToUserAddressDTO(savedAddress);
     }
 
+    @Override
+    @Transactional
+    public TbdAddressDTO updateAddress(Long id, TbdAddressDTO tbdAddressDTO) {
+
+        TbdAddress address = validateAndGetAddressById(id);
+        tbdAddressMapper.updateEntityFromDTO(tbdAddressDTO, address);
+
+        TbdAddress updatedAddress = tbdAddressRepository.save(address);
+
+        return tbdAddressMapper.tbdUserToUserAddressDTO(updatedAddress);
+    }
+
+    @Override
+    @Transactional
+    public TbdAddressDTO partialUpdateAddress(Long id, TbdAddressDTO tbdAddressDTO) {
+
+        TbdAddress address = validateAndGetAddressById(id);
+        tbdAddressMapper.partialUpdateEntityFromDto(tbdAddressDTO, address);
+
+        TbdAddress updatedAddress = tbdAddressRepository.save(address);
+
+        return tbdAddressMapper.tbdUserToUserAddressDTO(updatedAddress);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAddress(Long id) {
+
+        TbdAddress address = validateAndGetAddressById(id);
+        tbdAddressRepository.delete(address);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TbdAddressDTO getAddressById(Long id) {
+        return tbdAddressMapper.tbdUserToUserAddressDTO(validateAndGetAddressById(id));
+    }
+
     private void validateMaxAddressLimit(TbdUser tbdUser) {
 
         int totalAddressAdded = tbdAddressRepository.findCountByUserSub(tbdUser.getSub());
@@ -137,5 +177,16 @@ public class UserServiceImpl implements UserService {
         if (pageable.getPageSize() > pageSizeLimit) {
             throw new PageSizeLimitExceedException(translator.translate("error.request.page_size_limit_exceed", pageSizeLimit));
         }
+    }
+
+    private TbdAddress validateAndGetAddressById(Long id) {
+
+        if (!CommonUtil.validateId(id)) {
+            throw new ValidationException(translator.translate("error.request.invalid.id"));
+        }
+
+        Optional<TbdAddress> address = tbdAddressRepository.findById(id);
+
+        return address.orElseThrow(() -> new ResourceNotFoundInDbException(translator.translate("error.user.address.notfound")));
     }
 }

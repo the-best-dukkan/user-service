@@ -16,4 +16,8 @@ public interface UserService {
     UserResponseDTO getCurrentUser();
     Page<TbdAddressDTO> getAddresses(Pageable pageable);
     TbdAddressDTO addAddress(TbdAddressDTO tbdAddressDTO);
+    TbdAddressDTO updateAddress(Long id, TbdAddressDTO tbdAddressDTO);
+    TbdAddressDTO partialUpdateAddress(Long id, TbdAddressDTO tbdAddressDTO);
+    void deleteAddress(Long id);
+    TbdAddressDTO getAddressById(Long id);
 }
