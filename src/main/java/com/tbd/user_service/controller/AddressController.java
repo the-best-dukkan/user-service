@@ -2,10 +2,10 @@ package com.tbd.user_service.controller;
 
 import com.tbd.common.validation.groups.OnCreate;
 import com.tbd.common.validation.groups.OnUpdate;
+import com.tbd.proto.user_service.TbdAddressPageProto;
+import com.tbd.proto.user_service.TbdAddressProto;
 import com.tbd.user_service.dto.TbdAddressDTO;
 import com.tbd.user_service.mapper.TbdAddressMapper;
-import com.tbd.user_service.proto.TbdAddressPageProto;
-import com.tbd.user_service.proto.TbdAddressProto;
 import com.tbd.user_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

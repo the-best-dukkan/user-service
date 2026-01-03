@@ -2,9 +2,9 @@ package com.tbd.user_service.redis;
 
 import com.tbd.common.cache.ProtobufRedisSerializer;
 import com.tbd.common.utils.CommonUtil;
+import com.tbd.proto.user_service.TbdAddressPageProto;
+import com.tbd.proto.user_service.TbdAddressProto;
 import com.tbd.user_service.constant.Constant;
-import com.tbd.user_service.proto.TbdAddressPageProto;
-import com.tbd.user_service.proto.TbdAddressProto;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

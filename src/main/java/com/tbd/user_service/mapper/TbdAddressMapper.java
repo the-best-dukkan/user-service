@@ -1,10 +1,10 @@
 package com.tbd.user_service.mapper;
 
 import com.tbd.common.utils.ProtoMapperUtils;
+import com.tbd.proto.user_service.TbdAddressPageProto;
+import com.tbd.proto.user_service.TbdAddressProto;
 import com.tbd.user_service.dto.TbdAddressDTO;
 import com.tbd.user_service.entity.TbdAddress;
-import com.tbd.user_service.proto.TbdAddressPageProto;
-import com.tbd.user_service.proto.TbdAddressProto;
 import org.mapstruct.*;
 import org.springframework.data.domain.Page;
 

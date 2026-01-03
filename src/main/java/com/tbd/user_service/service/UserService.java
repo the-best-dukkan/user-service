@@ -1,11 +1,11 @@
 package com.tbd.user_service.service;
 
+import com.tbd.proto.user_service.TbdAddressPageProto;
+import com.tbd.proto.user_service.TbdAddressProto;
 import com.tbd.user_service.dto.TbdAddressDTO;
 import com.tbd.user_service.dto.UserResponseDTO;
 import com.tbd.user_service.dto.UserSyncRequestDTO;
 import com.tbd.user_service.dto.UserSyncResponseDTO;
-import com.tbd.user_service.proto.TbdAddressPageProto;
-import com.tbd.user_service.proto.TbdAddressProto;
 import org.springframework.data.domain.Pageable;
 
 public interface UserService {
