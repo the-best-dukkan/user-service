@@ -1,13 +1,11 @@
 package com.tbd.user_service.entity;
 
-import com.tbd.user_service.audit.Auditable;
+import com.tbd.common.audit.Auditable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.util.ProxyUtils;
 
 import java.time.Instant;

@@ -1,11 +1,9 @@
 package com.tbd.user_service.exception.handler;
 
-import com.tbd.user_service.dto.ErrorResponse;
+import com.tbd.common.dto.ErrorResponse;
+import com.tbd.common.utils.Translator;
 import com.tbd.user_service.exception.MaxAddressLimitExceedException;
-import com.tbd.user_service.exception.PageSizeLimitExceedException;
-import com.tbd.user_service.exception.ResourceNotFoundInDbException;
-import com.tbd.user_service.exception.UserSubNotFoundInHeaderException;
-import com.tbd.user_service.util.Translator;
+import com.tbd.common.exceptions.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

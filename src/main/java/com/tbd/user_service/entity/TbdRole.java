@@ -1,6 +1,6 @@
 package com.tbd.user_service.entity;
 
-import com.tbd.user_service.audit.Auditable;
+import com.tbd.common.audit.Auditable;
 import com.tbd.user_service.enums.TbdRoles;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

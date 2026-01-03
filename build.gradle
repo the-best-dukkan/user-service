@@ -18,10 +18,10 @@ repositories {
     mavenLocal()
 	mavenCentral()
 
-    // GitHub Packages repository for common-security library
+    // GitHub Packages repository for common libraries
     maven {
         name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/the-best-dukkan/common-security")
+        url = uri("https://maven.pkg.github.com/the-best-dukkan/*")
         credentials {
             // This will look for the keys we added to your ~/.gradle/gradle.properties
             username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
@@ -32,6 +32,7 @@ repositories {
 
 ext {
     commonSecurityVersion = '1.0.3'
+    commonCodeVersion = '1.0.0'
     lombokVersion = '1.18.38'
     mapstructVersion = '1.6.3'
     lombokMapstructBindingVersion = '0.2.0'
@@ -41,6 +42,7 @@ ext {
 dependencies {
 
     implementation "com.tbd:common-security:${commonSecurityVersion}"
+    implementation "com.tbd:common-code:${commonCodeVersion}"
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'

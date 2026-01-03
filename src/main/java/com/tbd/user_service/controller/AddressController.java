@@ -1,7 +1,6 @@
 package com.tbd.user_service.controller;
 
 import com.tbd.user_service.dto.TbdAddressDTO;
-import com.tbd.user_service.exception.PageSizeLimitExceedException;
 import com.tbd.user_service.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +27,11 @@ public class AddressController {
     @GetMapping
     public ResponseEntity<Page<TbdAddressDTO>> getAddresses(@PageableDefault(size = 25, sort = {"modifiedDate"}, direction = Sort.Direction.DESC) Pageable pageable) {
         return new ResponseEntity<>(userService.getAddresses(pageable), HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<TbdAddressDTO> updateAddress(@RequestBody @Valid TbdAddressDTO tbdAddressDTO) {
+
+        return null;
     }
 }

@@ -1,5 +1,8 @@
 package com.tbd.user_service.service;
 
+import com.tbd.common.exceptions.PageSizeLimitExceedException;
+import com.tbd.common.exceptions.ResourceNotFoundInDbException;
+import com.tbd.common.utils.Translator;
 import com.tbd.user_service.dto.TbdAddressDTO;
 import com.tbd.user_service.dto.UserResponseDTO;
 import com.tbd.user_service.dto.UserSyncRequestDTO;
@@ -9,14 +12,11 @@ import com.tbd.user_service.entity.TbdRole;
 import com.tbd.user_service.entity.TbdUser;
 import com.tbd.user_service.enums.TbdRoles;
 import com.tbd.user_service.exception.MaxAddressLimitExceedException;
-import com.tbd.user_service.exception.PageSizeLimitExceedException;
-import com.tbd.user_service.exception.ResourceNotFoundInDbException;
 import com.tbd.user_service.mapper.TbdAddressMapper;
 import com.tbd.user_service.mapper.TbdUserMapper;
 import com.tbd.user_service.repository.TbdAddressRepository;
 import com.tbd.user_service.repository.UserRepository;
 import com.tbd.user_service.repository.UserRoleRepository;
-import com.tbd.user_service.util.Translator;
 import com.tbd.user_service.util.Util;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
