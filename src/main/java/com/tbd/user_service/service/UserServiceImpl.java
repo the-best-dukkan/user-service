@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public TbdAddressDTO updateAddress(Long id, TbdAddressDTO tbdAddressDTO) {
 
-        TbdAddress address = validateAndGetAddressById(id);
+        TbdAddress address = validateAndGetAddressByIdAndUser(id);
         tbdAddressMapper.updateEntityFromDTO(tbdAddressDTO, address);
 
         TbdAddress updatedAddress = tbdAddressRepository.save(address);
@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public TbdAddressDTO partialUpdateAddress(Long id, TbdAddressDTO tbdAddressDTO) {
 
-        TbdAddress address = validateAndGetAddressById(id);
+        TbdAddress address = validateAndGetAddressByIdAndUser(id);
         tbdAddressMapper.partialUpdateEntityFromDto(tbdAddressDTO, address);
 
         TbdAddress updatedAddress = tbdAddressRepository.save(address);
@@ -144,14 +144,14 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteAddress(Long id) {
 
-        TbdAddress address = validateAndGetAddressById(id);
+        TbdAddress address = validateAndGetAddressByIdAndUser(id);
         tbdAddressRepository.delete(address);
     }
 
     @Override
     @Transactional(readOnly = true)
     public TbdAddressDTO getAddressById(Long id) {
-        return tbdAddressMapper.tbdUserToUserAddressDTO(validateAndGetAddressById(id));
+        return tbdAddressMapper.tbdUserToUserAddressDTO(validateAndGetAddressByIdAndUser(id));
     }
 
     private void validateMaxAddressLimit(TbdUser tbdUser) {
@@ -179,14 +179,13 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private TbdAddress validateAndGetAddressById(Long id) {
+    private TbdAddress validateAndGetAddressByIdAndUser(Long id) {
 
         if (!CommonUtil.validateId(id)) {
             throw new ValidationException(translator.translate("error.request.invalid.id"));
         }
 
-        Optional<TbdAddress> address = tbdAddressRepository.findById(id);
-
+        Optional<TbdAddress> address = tbdAddressRepository.findByIdAndUserSub(id, Util.extractUserSubFromRequest(httpServletRequest, messageSource));
         return address.orElseThrow(() -> new ResourceNotFoundInDbException(translator.translate("error.user.address.notfound")));
     }
 }
