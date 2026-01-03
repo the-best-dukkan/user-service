@@ -1,15 +1,37 @@
 package com.tbd.user_service.mapper;
 
+import com.tbd.common.utils.ProtoMapperUtils;
 import com.tbd.user_service.dto.TbdAddressDTO;
 import com.tbd.user_service.entity.TbdAddress;
+import com.tbd.user_service.proto.TbdAddressPageProto;
+import com.tbd.user_service.proto.TbdAddressProto;
 import org.mapstruct.*;
+import org.springframework.data.domain.Page;
 
-@Mapper(componentModel = "spring", unmappedSourcePolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedSourcePolicy = ReportingPolicy.IGNORE, uses = {ProtoMapperUtils.class})
 public interface TbdAddressMapper {
 
-    TbdAddress tbdUserDTOToUserAddress(TbdAddressDTO tbdAddressDTO);
+    TbdAddress tbdAddressDTOToTbdAddress(TbdAddressDTO tbdAddressDTO);
 
-    TbdAddressDTO tbdUserToUserAddressDTO(TbdAddress tbdAddress);
+    TbdAddressDTO tbdAddressToTbdAddressDTO(TbdAddress tbdAddress);
+
+    @BeanMapping(nullValueCheckStrategy =  NullValueCheckStrategy.ALWAYS, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    TbdAddressProto tbdAddressToTbdAddressProto(TbdAddress tbdAddress);
+    TbdAddressDTO tbdAddressProtoToTbdAddressProtoDTO(TbdAddressProto tbdAddressProto);
+
+    default TbdAddressPageProto toAddressPageProto(Page<TbdAddress> page) {
+        if (page == null) return null;
+
+        return TbdAddressPageProto.newBuilder()
+                .addAllContent(page.getContent().stream()
+                        .map(this::tbdAddressToTbdAddressProto)
+                        .toList())
+                .setTotalElements(page.getTotalElements())
+                .setTotalPages(page.getTotalPages())
+                .setNumber(page.getNumber())
+                .setSize(page.getSize())
+                .build();
+    }
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
     @Mapping(target = "id", ignore = true)

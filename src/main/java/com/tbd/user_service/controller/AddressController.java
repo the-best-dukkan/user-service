@@ -3,10 +3,11 @@ package com.tbd.user_service.controller;
 import com.tbd.common.validation.groups.OnCreate;
 import com.tbd.common.validation.groups.OnUpdate;
 import com.tbd.user_service.dto.TbdAddressDTO;
+import com.tbd.user_service.mapper.TbdAddressMapper;
+import com.tbd.user_service.proto.TbdAddressPageProto;
+import com.tbd.user_service.proto.TbdAddressProto;
 import com.tbd.user_service.service.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class AddressController {
 
     private final UserService userService;
+    private final TbdAddressMapper tbdAddressMapper;
 
     @PostMapping
     public ResponseEntity<TbdAddressDTO> addAddress(@RequestBody @Validated(OnCreate.class) TbdAddressDTO tbdAddressDTO) {
@@ -28,13 +30,13 @@ public class AddressController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<TbdAddressDTO>> getAddresses(@PageableDefault(size = 25, sort = {"modifiedDate"}, direction = Sort.Direction.DESC) Pageable pageable) {
-        return new ResponseEntity<>(userService.getAddresses(pageable), HttpStatus.OK);
+    public ResponseEntity<TbdAddressPageProto> getAddresses(@PageableDefault(size = 25, sort = {"modifiedDate"}, direction = Sort.Direction.DESC) Pageable pageable) {
+        TbdAddressPageProto addresses = userService.getAddresses(pageable);
+        return new ResponseEntity<>(addresses, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TbdAddressDTO> getAddress(@PathVariable Long id) {
-
+    public ResponseEntity<TbdAddressProto> getAddress(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getAddressById(id));
     }
 

@@ -5,6 +5,7 @@ import com.tbd.common.exceptions.ResourceNotFoundInDbException;
 import com.tbd.common.exceptions.ValidationException;
 import com.tbd.common.utils.CommonUtil;
 import com.tbd.common.utils.Translator;
+import com.tbd.user_service.constant.Constant;
 import com.tbd.user_service.dto.TbdAddressDTO;
 import com.tbd.user_service.dto.UserResponseDTO;
 import com.tbd.user_service.dto.UserSyncRequestDTO;
@@ -16,6 +17,8 @@ import com.tbd.user_service.enums.TbdRoles;
 import com.tbd.user_service.exception.MaxAddressLimitExceedException;
 import com.tbd.user_service.mapper.TbdAddressMapper;
 import com.tbd.user_service.mapper.TbdUserMapper;
+import com.tbd.user_service.proto.TbdAddressPageProto;
+import com.tbd.user_service.proto.TbdAddressProto;
 import com.tbd.user_service.repository.TbdAddressRepository;
 import com.tbd.user_service.repository.UserRepository;
 import com.tbd.user_service.repository.UserRoleRepository;
@@ -23,6 +26,9 @@ import com.tbd.user_service.util.Util;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -91,33 +97,39 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<TbdAddressDTO> getAddresses(Pageable pageable) {
+    @Cacheable(value = Constant.CACHE_ADDRESS_PAGE, key = "{#root.target.userSub, #pageable}")
+    public TbdAddressPageProto getAddresses(Pageable pageable) {
 
         validatePageSize(pageable);
 
         TbdUser userFromDb = getUserFromDb();
 
         Page<TbdAddress> allByUserSub = tbdAddressRepository.findAllByUserSub(userFromDb.getSub(), pageable);
-        return allByUserSub.map(tbdAddressMapper::tbdUserToUserAddressDTO);
+        return tbdAddressMapper.toAddressPageProto(allByUserSub);
     }
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = Constant.CACHE_ADDRESS_PAGE, allEntries = true)
     public TbdAddressDTO addAddress(TbdAddressDTO tbdAddressDTO) {
 
         TbdUser tbdUser = getUserFromDb();
 
         validateMaxAddressLimit(tbdUser);
 
-        TbdAddress tbdAddress = tbdAddressMapper.tbdUserDTOToUserAddress(tbdAddressDTO);
+        TbdAddress tbdAddress = tbdAddressMapper.tbdAddressDTOToTbdAddress(tbdAddressDTO);
 
         tbdAddress.setUser(tbdUser);
         TbdAddress savedAddress = tbdAddressRepository.save(tbdAddress);
-        return tbdAddressMapper.tbdUserToUserAddressDTO(savedAddress);
+        return tbdAddressMapper.tbdAddressToTbdAddressDTO(savedAddress);
     }
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = Constant.CACHE_ADDRESS_BY_ID, key = "#id"),
+            @CacheEvict(cacheNames = Constant.CACHE_ADDRESS_PAGE, allEntries = true)
+    })
     public TbdAddressDTO updateAddress(Long id, TbdAddressDTO tbdAddressDTO) {
 
         TbdAddress address = validateAndGetAddressByIdAndUser(id);
@@ -125,11 +137,15 @@ public class UserServiceImpl implements UserService {
 
         TbdAddress updatedAddress = tbdAddressRepository.save(address);
 
-        return tbdAddressMapper.tbdUserToUserAddressDTO(updatedAddress);
+        return tbdAddressMapper.tbdAddressToTbdAddressDTO(updatedAddress);
     }
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = Constant.CACHE_ADDRESS_BY_ID, key = "#id"),
+            @CacheEvict(cacheNames = Constant.CACHE_ADDRESS_PAGE, allEntries = true)
+    })
     public TbdAddressDTO partialUpdateAddress(Long id, TbdAddressDTO tbdAddressDTO) {
 
         TbdAddress address = validateAndGetAddressByIdAndUser(id);
@@ -137,11 +153,15 @@ public class UserServiceImpl implements UserService {
 
         TbdAddress updatedAddress = tbdAddressRepository.save(address);
 
-        return tbdAddressMapper.tbdUserToUserAddressDTO(updatedAddress);
+        return tbdAddressMapper.tbdAddressToTbdAddressDTO(updatedAddress);
     }
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = Constant.CACHE_ADDRESS_BY_ID, key = "#id"),
+            @CacheEvict(cacheNames = Constant.CACHE_ADDRESS_PAGE, allEntries = true)
+    })
     public void deleteAddress(Long id) {
 
         TbdAddress address = validateAndGetAddressByIdAndUser(id);
@@ -150,8 +170,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public TbdAddressDTO getAddressById(Long id) {
-        return tbdAddressMapper.tbdUserToUserAddressDTO(validateAndGetAddressByIdAndUser(id));
+    @Cacheable(value = Constant.CACHE_ADDRESS_BY_ID, key = "{#root.target.userSub, #id}")
+    public TbdAddressProto getAddressById(Long id) {
+        return tbdAddressMapper.tbdAddressToTbdAddressProto(validateAndGetAddressByIdAndUser(id));
     }
 
     private void validateMaxAddressLimit(TbdUser tbdUser) {
@@ -187,5 +208,10 @@ public class UserServiceImpl implements UserService {
 
         Optional<TbdAddress> address = tbdAddressRepository.findByIdAndUserSub(id, Util.extractUserSubFromRequest(httpServletRequest, messageSource));
         return address.orElseThrow(() -> new ResourceNotFoundInDbException(translator.translate("error.user.address.notfound")));
+    }
+
+    // helper method for redis key
+    public String getUserSub() {
+        return Util.extractUserSubFromRequest(httpServletRequest, messageSource);
     }
 }

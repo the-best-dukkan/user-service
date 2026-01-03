@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.9'
 	id 'io.spring.dependency-management' version '1.1.7'
+    id("com.google.protobuf") version "0.9.6"
 }
 
 group = 'com.tbd'
@@ -32,11 +33,12 @@ repositories {
 
 ext {
     commonSecurityVersion = '1.0.3'
-    commonCodeVersion = '1.0.6'
+    commonCodeVersion = '1.0.9'
     lombokVersion = '1.18.38'
     mapstructVersion = '1.6.3'
     lombokMapstructBindingVersion = '0.2.0'
     set('springCloudVersion', "2025.0.1")
+    protobufVersion = '4.33.0'
 }
 
 dependencies {
@@ -44,10 +46,16 @@ dependencies {
     implementation "com.tbd:common-security:${commonSecurityVersion}"
     implementation "com.tbd:common-code:${commonCodeVersion}"
 
+    // protobuf
+    implementation("com.google.protobuf:protobuf-java:${protobufVersion}")
+    implementation("com.google.protobuf:protobuf-java-util:${protobufVersion}")
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation "org.springframework.boot:spring-boot-starter-data-redis"
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
@@ -67,6 +75,12 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protobufVersion}"
+    }
 }
 
 dependencyManagement {
