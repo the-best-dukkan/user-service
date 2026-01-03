@@ -4,6 +4,7 @@ import com.tbd.common.dto.ErrorResponse;
 import com.tbd.user_service.exception.MaxAddressLimitExceedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.query.sqm.PathElementException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,11 @@ public class UserGlobalExceptionHandler {
 
     @ExceptionHandler(MaxAddressLimitExceedException.class)
     public ResponseEntity<ErrorResponse> handleMaxAddressLimitExceedException(MaxAddressLimitExceedException ex) {
+        return getErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ExceptionHandler(PathElementException.class)
+    public ResponseEntity<ErrorResponse> handlePathElementException(PathElementException ex) {
         return getErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 

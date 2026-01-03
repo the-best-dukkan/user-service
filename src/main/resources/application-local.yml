@@ -17,6 +17,10 @@ spring:
     basename: i18n/messages
     encoding: UTF-8
     fallback-to-system-locale: true
+  data:
+    web:
+      pageable:
+        serialization-mode: via_dto
 server:
   port: 2032
   servlet:
