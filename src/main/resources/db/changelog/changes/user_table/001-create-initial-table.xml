@@ -19,8 +19,8 @@
             </column>
             <column name="profile_complete" type="BOOLEAN" defaultValueBoolean="false"/>
             <column name="is_email_verified" type="BOOLEAN" defaultValueBoolean="false"/>
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
-            <column name="modified_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="modified_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
             <column name="last_login" type="TIMESTAMP">
                 <constraints nullable="true"/>
             </column>
@@ -35,6 +35,8 @@
             <column name="name" type="VARCHAR(50)">
                 <constraints unique="true" nullable="false"/>
             </column>
+            <column name="created_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="modified_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
         </createTable>
 
         <insert tableName="tbd_roles">
@@ -63,6 +65,8 @@
                 <constraints nullable="false" foreignKeyName="fk_role" referencedTableName="tbd_roles"
                              referencedColumnNames="id"/>
             </column>
+            <column name="created_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="modified_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
         </createTable>
     </changeSet>
 

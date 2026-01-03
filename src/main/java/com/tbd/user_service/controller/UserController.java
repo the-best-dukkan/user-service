@@ -1,19 +1,22 @@
 package com.tbd.user_service.controller;
 
+import com.tbd.user_service.dto.UserResponseDTO;
+import com.tbd.user_service.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-import java.util.List;
-
 @RequestMapping("/api/users")
 @RestController
+@RequiredArgsConstructor
 public class UserController {
 
-    @GetMapping("/all")
-    public List<String> getUsers() {
+    private final UserService userService;
 
-        return Arrays.asList("user1", "user2", "user3");
+    @GetMapping("/detail")
+    public ResponseEntity<UserResponseDTO> getCurrentUserDetails() {
+        return ResponseEntity.ok(userService.getCurrentUser());
     }
 }

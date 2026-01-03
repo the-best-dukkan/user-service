@@ -1,5 +1,6 @@
 package com.tbd.user_service.mapper;
 
+import com.tbd.user_service.dto.UserResponseDTO;
 import com.tbd.user_service.dto.UserSyncRequestDTO;
 import com.tbd.user_service.dto.UserSyncResponseDTO;
 import com.tbd.user_service.entity.TbdUser;
@@ -10,6 +11,7 @@ import org.mapstruct.ReportingPolicy;
 public interface TbdUserMapper {
 
     UserSyncResponseDTO tbdUserToUserSyncResponse(TbdUser tbdUser);
+    UserResponseDTO tbdUserToUserResponseDTO(TbdUser tbdUser);
 
     TbdUser userSyncRequestDTOToTbdUser(UserSyncRequestDTO userSyncRequestDTO);
 }
