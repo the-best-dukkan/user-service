@@ -2,7 +2,9 @@ package com.tbd.user_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessageConverter;
 
 @SpringBootApplication
 @EnableJpaAuditing
@@ -12,4 +14,8 @@ public class UserServiceApplication {
 		SpringApplication.run(UserServiceApplication.class, args);
 	}
 
+	@Bean
+	public ProtobufJsonFormatHttpMessageConverter protobufJsonFormatHttpMessageConverter() {
+		return new ProtobufJsonFormatHttpMessageConverter();
+	}
 }

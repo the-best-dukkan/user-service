@@ -1,6 +1,6 @@
 package com.tbd.user_service.controller;
 
-import com.tbd.user_service.dto.UserResponseDTO;
+import com.tbd.proto.user_service.TbdUserProto;
 import com.tbd.user_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/detail")
-    public ResponseEntity<UserResponseDTO> getCurrentUserDetails() {
+    public ResponseEntity<TbdUserProto> getCurrentUserDetails() {
         return ResponseEntity.ok(userService.getCurrentUser());
     }
 }

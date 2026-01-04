@@ -32,7 +32,7 @@ repositories {
 
 ext {
     commonSecurityVersion = '1.0.3'
-    commonCodeVersion = '1.0.6'
+    commonCodeVersion = '1.0.11'
     lombokVersion = '1.18.38'
     mapstructVersion = '1.6.3'
     lombokMapstructBindingVersion = '0.2.0'
@@ -48,6 +48,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
