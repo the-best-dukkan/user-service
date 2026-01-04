@@ -5,7 +5,6 @@ import com.tbd.common.validation.groups.OnUpdate;
 import com.tbd.proto.user_service.TbdAddressPageProto;
 import com.tbd.proto.user_service.TbdAddressProto;
 import com.tbd.user_service.dto.TbdAddressDTO;
-import com.tbd.user_service.mapper.TbdAddressMapper;
 import com.tbd.user_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 public class AddressController {
 
     private final UserService userService;
-    private final TbdAddressMapper tbdAddressMapper;
 
     @PostMapping
     public ResponseEntity<TbdAddressDTO> addAddress(@RequestBody @Validated(OnCreate.class) TbdAddressDTO tbdAddressDTO) {
