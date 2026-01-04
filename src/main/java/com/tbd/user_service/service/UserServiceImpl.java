@@ -7,9 +7,9 @@ import com.tbd.common.utils.CommonUtil;
 import com.tbd.common.utils.Translator;
 import com.tbd.proto.user_service.TbdAddressPageProto;
 import com.tbd.proto.user_service.TbdAddressProto;
+import com.tbd.proto.user_service.TbdUserProto;
 import com.tbd.user_service.constant.Constant;
 import com.tbd.user_service.dto.TbdAddressDTO;
-import com.tbd.user_service.dto.UserResponseDTO;
 import com.tbd.user_service.dto.UserSyncRequestDTO;
 import com.tbd.user_service.dto.UserSyncResponseDTO;
 import com.tbd.user_service.entity.TbdAddress;
@@ -60,6 +60,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = Constant.CACHE_USER_BY_SUB, allEntries = true)
     public UserSyncResponseDTO syncUser(UserSyncRequestDTO userSyncRequestDTO) {
 
         // check in user db if user already exists
@@ -88,12 +89,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserResponseDTO getCurrentUser() {
-
+    @Cacheable(value = Constant.CACHE_USER_BY_SUB, key = "{#root.target.userSub}")
+    public TbdUserProto getCurrentUser() {
         TbdUser tbdUser = getUserFromDb();
-        return tbdUserMapper.tbdUserToUserResponseDTO(tbdUser);
+        return tbdUserMapper.toProto(tbdUser);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = Constant.CACHE_ADDRESS_BY_ID, key = "{#root.target.userSub, #id}")
+    public TbdAddressProto getAddressById(Long id) {
+        return tbdAddressMapper.tbdAddressToTbdAddressProto(validateAndGetAddressByIdAndUser(id));
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -105,6 +112,9 @@ public class UserServiceImpl implements UserService {
         TbdUser userFromDb = getUserFromDb();
 
         Page<TbdAddress> allByUserSub = tbdAddressRepository.findAllByUserSub(userFromDb.getSub(), pageable);
+        if (!allByUserSub.hasContent()) {
+            return TbdAddressPageProto.newBuilder().build();
+        }
         return tbdAddressMapper.toAddressPageProto(allByUserSub);
     }
 
@@ -127,7 +137,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = Constant.CACHE_ADDRESS_BY_ID, key = "#id"),
+            @CacheEvict(value = Constant.CACHE_ADDRESS_BY_ID, key = "{#root.target.userSub, #id}"),
             @CacheEvict(cacheNames = Constant.CACHE_ADDRESS_PAGE, allEntries = true)
     })
     public TbdAddressDTO updateAddress(Long id, TbdAddressDTO tbdAddressDTO) {
@@ -143,7 +153,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = Constant.CACHE_ADDRESS_BY_ID, key = "#id"),
+            @CacheEvict(value = Constant.CACHE_ADDRESS_BY_ID, key = "{#root.target.userSub, #id}"),
             @CacheEvict(cacheNames = Constant.CACHE_ADDRESS_PAGE, allEntries = true)
     })
     public TbdAddressDTO partialUpdateAddress(Long id, TbdAddressDTO tbdAddressDTO) {
@@ -159,20 +169,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = Constant.CACHE_ADDRESS_BY_ID, key = "#id"),
+            @CacheEvict(value = Constant.CACHE_ADDRESS_BY_ID, key = "{#root.target.userSub, #id}"),
             @CacheEvict(cacheNames = Constant.CACHE_ADDRESS_PAGE, allEntries = true)
     })
     public void deleteAddress(Long id) {
 
         TbdAddress address = validateAndGetAddressByIdAndUser(id);
         tbdAddressRepository.delete(address);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    @Cacheable(value = Constant.CACHE_ADDRESS_BY_ID, key = "{#root.target.userSub, #id}")
-    public TbdAddressProto getAddressById(Long id) {
-        return tbdAddressMapper.tbdAddressToTbdAddressProto(validateAndGetAddressByIdAndUser(id));
     }
 
     private void validateMaxAddressLimit(TbdUser tbdUser) {

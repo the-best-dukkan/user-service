@@ -32,7 +32,7 @@ repositories {
 
 ext {
     commonSecurityVersion = '1.0.3'
-    commonCodeVersion = '1.0.10'
+    commonCodeVersion = '1.0.11'
     lombokVersion = '1.18.38'
     mapstructVersion = '1.6.3'
     lombokMapstructBindingVersion = '0.2.0'
